@@ -1,10 +1,15 @@
 import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/navbar";
+import Game from "./components/game";
 import "bootstrap/dist/css/bootstrap.css";
+import "./App.css";
 function App() {
-  return <Navbar></Navbar>;
+  return (
+    <React.Fragment>
+      <Navbar />
+      <Game />
+    </React.Fragment>
+  );
 }
 
 export default App;

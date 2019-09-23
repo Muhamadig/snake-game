@@ -20,3 +20,8 @@
 .App-link {
   color: #09d3ac;
 }
+
+#game {
+  padding-top: 70px;
+  font-size: large;
+}
