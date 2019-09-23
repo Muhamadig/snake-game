@@ -6,7 +6,7 @@ class Game extends Component {
   render() {
     return (
       <div className="container" id="game">
-        <div className="row">
+        <div className="row justify-content-md-center">
           <div className="col-1"></div>
           <div className="">
             <Controller />
