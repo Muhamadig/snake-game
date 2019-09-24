@@ -11,8 +11,8 @@ class Grid extends Component {
       direction: "left"
     },
     rows: [],
-    rowsNumber: 30,
-    columnsNumber: 30
+    rowsNumber: 20,
+    columnsNumber: 20
   };
 
   constructor() {
@@ -49,14 +49,18 @@ class Grid extends Component {
     this.state.snake.tail = snakeHeadCell;
     this.state.snake.head.type = "snake";
 
+    this.generateNewFood();
+  };
+
+  generateNewFood = () => {
     const foodCellIndex = Math.floor(
       Math.random() * this.state.emptyCells.length
     );
-    this.state.emptyCells.splice(foodCellIndex, 1);
-    this.state.food = this.state.allCells[foodCellIndex];
-    this.state.food.type = "food";
+    const emptyCells = this.state.emptyCells.splice(foodCellIndex, 1);
+    let food = this.state.allCells[foodCellIndex];
+    food.type = "food";
+    this.setState({ emptyCells, food });
   };
-
   getCell = (x, y) => {
     return this.state.allCells.find(cell => cell.x === x && cell.y === y);
   };
@@ -68,6 +72,18 @@ class Grid extends Component {
     return this.state.allCells.filter(cell => cell.y === rowNumber);
   };
 
+  getTailNext = () => {
+    const { tail } = this.state.snake;
+    const neighbours = [];
+    if (tail.x + 1 < this.state.columnsNumber)
+      neighbours.push(this.getCell(tail.x + 1, tail.y));
+    if (tail.x - 1 >= 0) neighbours.push(this.getCell(tail.x - 1, tail.y));
+    if (tail.y + 1 < this.state.rowsNumber)
+      neighbours.push(this.getCell(tail.x, tail.y + 1));
+    if (tail.y - 1 >= 0) neighbours.push(this.getCell(tail.x, tail.y - 1));
+
+    return neighbours.find(cell => cell.type === "snake");
+  };
   render() {
     return (
       <div className="border border-primary m-2">
@@ -120,75 +136,101 @@ class Grid extends Component {
       case "left":
         if (head.x - 1 < 0) this.gameOver();
         else {
-          const headLeft = this.getEmptyCell(head.x - 1, head.y);
-          headLeft.type = "snake";
-          head = headLeft;
-          this.state.emptyCells.splice(
-            this.state.emptyCells.indexOf(headLeft),
-            1
-          );
-
-          const tailLeft = this.getCell(tail.x - 1, tail.y);
-          tail.type = "empty";
-          this.state.emptyCells.push(tail);
-          tail = tailLeft;
-
+          //   const headLeft = this.getEmptyCell(head.x - 1, head.y);
+          const headLeft = this.getCell(head.x - 1, head.y);
+          if (headLeft.type === "food") {
+            headLeft.type = "snake";
+            head = headLeft;
+            this.generateNewFood();
+          } else if (headLeft.type === "snake") this.gameOver();
+          else {
+            headLeft.type = "snake";
+            head = headLeft;
+            this.state.emptyCells.splice(
+              this.state.emptyCells.indexOf(headLeft),
+              1
+            );
+            this.setState({ snake: { direction, head, tail } });
+            const tailNext = this.getTailNext();
+            tail.type = "empty";
+            this.state.emptyCells.push(tail);
+            tail = tailNext;
+          }
           this.setState({ snake: { direction, head, tail } });
         }
         break;
       case "up":
         if (head.y - 1 < 0) this.gameOver();
         else {
-          const headUp = this.getEmptyCell(head.x, head.y - 1);
-          headUp.type = "snake";
-          head = headUp;
-          this.state.emptyCells.splice(
-            this.state.emptyCells.indexOf(headUp),
-            1
-          );
-
-          const tailUp = this.getCell(tail.x, tail.y - 1);
-          tail.type = "empty";
-          this.state.emptyCells.push(tail);
-          tail = tailUp;
-
+          const headUp = this.getCell(head.x, head.y - 1);
+          if (headUp.type === "food") {
+            headUp.type = "snake";
+            head = headUp;
+            this.generateNewFood();
+          } else if (headUp.type === "snake") this.gameOver();
+          else {
+            headUp.type = "snake";
+            head = headUp;
+            this.state.emptyCells.splice(
+              this.state.emptyCells.indexOf(headUp),
+              1
+            );
+            this.setState({ snake: { direction, head, tail } });
+            const tailNext = this.getTailNext();
+            tail.type = "empty";
+            this.state.emptyCells.push(tail);
+            tail = tailNext;
+          }
           this.setState({ snake: { direction, head, tail } });
         }
         break;
       case "down":
         if (head.y + 1 >= this.state.rowsNumber) this.gameOver();
         else {
-          const headDown = this.getEmptyCell(head.x, head.y + 1);
-          headDown.type = "snake";
-          head = headDown;
-          this.state.emptyCells.splice(
-            this.state.emptyCells.indexOf(headDown),
-            1
-          );
-
-          const tailDown = this.getCell(tail.x, tail.y + 1);
-          tail.type = "empty";
-          this.state.emptyCells.push(tail);
-          tail = tailDown;
-
+          const headDown = this.getCell(head.x, head.y + 1);
+          if (headDown.type === "food") {
+            headDown.type = "snake";
+            head = headDown;
+            this.generateNewFood();
+          } else if (headDown.type === "snake") this.gameOver();
+          else {
+            headDown.type = "snake";
+            head = headDown;
+            this.state.emptyCells.splice(
+              this.state.emptyCells.indexOf(headDown),
+              1
+            );
+            this.setState({ snake: { direction, head, tail } });
+            const tailNext = this.getTailNext();
+            tail.type = "empty";
+            this.state.emptyCells.push(tail);
+            tail = tailNext;
+          }
           this.setState({ snake: { direction, head, tail } });
         }
         break;
       case "right":
         if (head.x + 1 >= this.state.columnsNumber) this.gameOver();
         else {
-          const headRight = this.getEmptyCell(head.x + 1, head.y);
-          headRight.type = "snake";
-          head = headRight;
-          this.state.emptyCells.splice(
-            this.state.emptyCells.indexOf(headRight),
-            1
-          );
-
-          const tailRight = this.getCell(tail.x + 1, tail.y);
-          tail.type = "empty";
-          this.state.emptyCells.push(tail);
-          tail = tailRight;
+          const headRight = this.getCell(head.x + 1, head.y);
+          if (headRight.type === "food") {
+            headRight.type = "snake";
+            head = headRight;
+            this.generateNewFood();
+          } else if (headRight.type === "snake") this.gameOver();
+          else {
+            headRight.type = "snake";
+            head = headRight;
+            this.state.emptyCells.splice(
+              this.state.emptyCells.indexOf(headRight),
+              1
+            );
+            this.setState({ snake: { direction, head, tail } });
+            const tailNext = this.getTailNext();
+            tail.type = "empty";
+            this.state.emptyCells.push(tail);
+            tail = tailNext;
+          }
 
           this.setState({ snake: { direction, head, tail } });
         }
