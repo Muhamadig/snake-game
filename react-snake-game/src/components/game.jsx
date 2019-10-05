@@ -9,7 +9,6 @@ class Game extends Component {
         <div className="row justify-content-md-center">
           <div className="col-1"></div>
           <div className="">
-            <Controller />
             <Grid></Grid>
           </div>
         </div>
